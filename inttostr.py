@@ -1,6 +1,7 @@
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+from collections import Counter
 
 text = "A barber is a person. a barber is good person. a barber is huge person. he Knew A Secret! The Secret He Kept is huge secret. Huge secret. His barber kept his word. a barber kept his word. His barber kept his secret. But keeping and keeping such a huge secret to himself was driving the barber crazy. the barber went up a huge mountain."
 
@@ -22,7 +23,7 @@ for i in text:
                 vocab[word] = 0
             vocab[word] += 1
     sentences.append(result)
-print(sentences)
+#print(sentences)
 
 
 vocab = {} # 파이썬의 dictionary 자료형
@@ -42,4 +43,35 @@ for i in text:
                     vocab[word] = 0
                 vocab[word] += 1
     sentences.append(result)
-print(sentences)
+#print(sentences)
+
+#정렬
+vocab_sorted = sorted(vocab.items(), key = lambda x:x[1], reverse = True)
+#print(vocab_sorted)
+
+#인덱스부여
+word_to_index = {}
+i=0
+for (word, frequency) in vocab_sorted :
+    if frequency > 1 : # 정제(Cleaning) 챕터에서 언급했듯이 빈도수가 적은 단어는 제외한다.
+        i=i+1
+        word_to_index[word] = i
+#print(word_to_index)
+
+#인덱스제거
+vocab_size = 5
+words_frequency = [w for w,c in word_to_index.items() if c >= vocab_size + 1] # 인덱스가 5 초과인 단어 제거
+for w in words_frequency:
+    del word_to_index[w] # 해당 단어에 대한 인덱스 정보를 삭제
+#print(word_to_index)
+
+word_to_index['OOV'] = len(word_to_index) + 1
+
+
+words = sum(sentences, [])
+vocab = Counter(words)
+
+vocab_size=5
+vocab=vocab.most_common(vocab_size)
+print(vocab)
+
